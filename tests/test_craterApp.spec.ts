@@ -57,25 +57,10 @@ test.beforeEach('Login',async({page})=>{
     //await page.pause()
   })
 
-  /*
-  Element container: //table[@class='min-w-full divide-y divide-gray-200']//tbody
-  .//tr -> filas
-
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[1]->check
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[2]->name
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[2]//span[@class='font-medium text-primary-500 flex flex-col']//font//font -> name
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[3]->phone
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[4]->amount due
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[5]->added on
-  //table[@class='min-w-full divide-y divide-gray-200']//tr[1]//td[6]//button->button
-  */
 
  test('enter to items', async ({ page }) => {
     const Entertoitem = new entertointem(page) 
-  
     await Entertoitem.entertoItem()
-
-
     await page.pause();
   });
 
@@ -91,28 +76,27 @@ test.beforeEach('Login',async({page})=>{
   test('delete item',async({page})=>{
     const Entertoitem = new entertointem(page);
     await Entertoitem.entertoItem();
-
     expect (page.locator('//table')).toBeVisible;
-  
-    const tableContainer= page.locator('//table');
+    const tableContainer= page.locator('//table');//contenedor de la tabla
+    const rows= await tableContainer.locator('xpath=.//tr').all();//obetenemos todas las filas de la tabla 
+    await expect(tableContainer.locator('xpath=.//tbody//tr')).toHaveCount(3)//Comprobamos que se obetegan el numero de filas obtenidas
+    
+    console.log(rows.length)//Se imprime por consola cuantas filas se obtienen en la variable rows
 
-    const rows= await tableContainer.locator('xpath=.//tr').all();
+    for (let row of rows){//Se hace recorrido de las filas y se imprimen solo el nombre
+      //console.log(await row.innerHTML())
+      console.log(await row.innerText())
+    }
 
-    console.log(rows.length)
-
-    if (rows.length>1) {
+    /*if (rows.length>1) {
       await page.locator('td:nth-child(6) > .relative').first().click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
       await page.getByRole('button',{name:'Ok'}).click()
       console.log(rows.length)
      }else{
       console.log('No hay articulos para eliminar')
-     }
+     }*/
 
     await page.pause()
   })
 
-
-
-
-  

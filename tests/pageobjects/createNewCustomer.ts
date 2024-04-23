@@ -21,6 +21,7 @@ export class createNewCustomer{
     private readonly numberPhoneTextbox2:Locator
     private readonly zipTextbox:Locator
     private readonly copyDateBilling:Locator
+    private readonly saveCustomer:Locator
 
     constructor(page:Page){
         this.usernameTextbox = page.locator('//input[@name="name"]').nth(0);
@@ -43,6 +44,7 @@ export class createNewCustomer{
         this.numberPhoneTextbox2 = page.locator('//input[@name="phone"]').nth(1);
         this.zipTextbox = page.locator('//input[@name="zip"]').nth(0);
         this.copyDateBilling = page.locator('.p-1>button');
+        this.saveCustomer = page.getByRole('button',{name:'Save Customer'})
     }
 
     async createCustomer(name:string,email:string,numberPhone:string,currency:string, 
@@ -68,5 +70,6 @@ export class createNewCustomer{
             await this.numberPhoneTextbox2.fill(numberPhone)
             await this.zipTextbox.fill(zip)
             await this.copyDateBilling.click()
+            await this.saveCustomer.click()
     }
 }
