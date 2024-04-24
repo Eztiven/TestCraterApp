@@ -1,4 +1,5 @@
 import { Locator, Page } from "@playwright/test"
+import { Url } from "url"
 
 export class Login{
     private readonly page:Page
@@ -10,8 +11,8 @@ export class Login{
         this.loginButton = page.locator('button', {hasText:'Login'})
     }
 
-    async loginWhitCredential(){
-        await this.page.goto('https://demo.craterapp.com/')
+    async loginWhitCredential(urlPage:any){
+        await this.page.goto(String(urlPage))
 
         await this.loginButton.click()
     }

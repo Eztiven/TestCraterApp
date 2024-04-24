@@ -12,16 +12,16 @@ export class createNewItem{
         this.nameTextbox = page.getByRole('textbox').nth(1);
         this.priceTextbox = page.locator('//input[@id="0"]');
         this.unitTextbox = page.getByRole('textbox').nth(3);
-        this.selectUnit = page.locator('li').filter({ hasText: 'cm' });
+        this.selectUnit = page.getByRole('textbox').nth(3);
         this.descriptionTextbox = page.locator('textarea[name="description"]');
         this.saveItemButton = page.getByRole('button', {name:'Save Item'});
     }
 
-    async createCustomer(name:string,price:string,unit:string,description:string){
-            await this.nameTextbox.fill(name)
+    async createCustomer(nameItem:string,price:string,unit:string,description:string){
+            await this.nameTextbox.fill(nameItem)
             await this.priceTextbox.fill(price)
             await this.unitTextbox.fill(unit)
-            await this.selectUnit.click()
+            await this.selectUnit.press('Enter')
             await this.descriptionTextbox.fill(description)
             await this.saveItemButton.click()
     }

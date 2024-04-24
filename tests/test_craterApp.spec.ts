@@ -4,99 +4,83 @@ import { entertoNewCustomer } from './pageobjects/entertoNewCustomer';
 import { createNewCustomer } from './pageobjects/createNewCustomer';
 import { entertointem } from './pageobjects/entertoitem';
 import { createNewItem } from './pageobjects/createNewItem';
+import { stringify } from 'querystring';
 
+// Antes de cada prueba, realiza el inicio de sesión
 test.beforeEach('Login',async({page})=>{
-    const loginpage= new Login(page)
-  
-    await loginpage.loginWhitCredential();
-    expect(page.getByRole('link',{name:'Dashboard'})).toBeVisible;
+  const loginpage= new Login(page)
+  await loginpage.loginWhitCredential(process.env.URL);
+  expect(page.getByRole('link',{name:'Dashboard'})).toBeVisible();
 })
 
-  test('enter to customer', async ({ page }) => {
-    const EntertoNewcustomer = new entertoNewCustomer(page)
-    
-    await EntertoNewcustomer.entertoCustomer();
+test('enter to customer', async ({ page }) => {
+  const EntertoNewcustomer = new entertoNewCustomer(page)
+  await EntertoNewcustomer.entertoCustomer();
+  await expect(page).toHaveURL(/.*\/customers/);
+});
 
-    await page.pause();
-  });
+test('create new customer', async ({ page }) => {
+  const EntertoNewcustomer = new entertoNewCustomer(page)
+  const CreateNewcustomer = new createNewCustomer(page)
 
-  test('create new customer', async ({ page }) => {
-    const EntertoNewcustomer = new entertoNewCustomer(page)
-    const CreateNewcustomer = new createNewCustomer(page)
+  await EntertoNewcustomer.entertoNewCustomer();
+  await expect(page).toHaveURL(/.*\/customers\/create/);
 
-    await EntertoNewcustomer.entertoNewCustomer();
+  await CreateNewcustomer.createCustomer(String(process.env.name),String(process.env.email),
+  String(process.env.numberPhone),String(process.env.currency),String(process.env.nameWebsite),
+  String(process.env.prefix),String(process.env.password),String(process.env.confirm_password), 
+  String(process.env.address_name),String(process.env.country),String(process.env.state),
+  String(process.env.city),String(process.env.address),String(process.env.zip))
+  await expect(page).toHaveURL(/.*\/view/);
+});
 
-    await CreateNewcustomer.createCustomer('Juan Martínez','juan@gmail.com','3001234567','cop','https://google.com',
-    '+57','12345678','12345678', 'Juan Martínez','colomb','Atlantico','Barranquilla','Cra 42#80b-31','200002')
+test('delete customer',async({page})=>{
+  const Entertocustomer = new entertoNewCustomer(page)
+  await Entertocustomer.entertoCustomer();
 
-    await page.pause();
-  });
+  expect (page.locator('table[class="min-w-full divide-y divide-gray-200"]')).toBeVisible;
+  const tableContainer= page.locator('//table[@class="min-w-full divide-y divide-gray-200"]//tbody')
+  const rows= await tableContainer.locator('xpath=.//tr').all();
 
-  test('delete customer',async({page})=>{
-    const Entertocustomer = new entertoNewCustomer(page)
-    await Entertocustomer.entertoCustomer();
-
-    //await page.locator('//input[@type="checkbox"]').nth(0).check()
-
-
-   expect (page.locator('table[class="min-w-full divide-y divide-gray-200"]')).toBeVisible;
-   const tableContainer= page.locator('//table[@class="min-w-full divide-y divide-gray-200"]//tbody')
-
-   const rows= await tableContainer.locator('xpath=.//tr').all()
-
-   console.log(rows.length)
-
-   if (rows.length>1 && await page.locator('button[type="button"]').nth(2).isVisible() ) {
+  if (rows.length>1 && await page.locator('button[type="button"]').nth(2).isVisible() ) {
     await page.locator('td:nth-child(6) > .relative').first().click();
     await page.getByRole('menuitem', { name: 'Delete' }).click();
-    console.log(rows.length)
-   }else{
+  }else{
     console.log('No hay clientes para eliminar')
-   }
-
-    //await page.pause()
-  })
+  }
+})
 
 
- test('enter to items', async ({ page }) => {
-    const Entertoitem = new entertointem(page) 
-    await Entertoitem.entertoItem()
-    await page.pause();
-  });
+test('enter to items', async ({ page }) => {
+  const Entertoitem = new entertointem(page) 
+  await Entertoitem.entertoItem()
+  await expect(page).toHaveURL(/.*\/items/);
+});
 
-  test('create new items', async ({ page }) => {
-    const Entertoitem = new entertointem(page) 
-    const CreateNewItem = new createNewItem(page)
-    await Entertoitem.entertoNewItem()
-    await CreateNewItem.createCustomer('Rule','1.00','cm','this ..........')
+test('create new items', async ({ page }) => {
+  const Entertoitem = new entertointem(page) 
+  const CreateNewItem = new createNewItem(page)
+  await Entertoitem.entertoNewItem()
+  await CreateNewItem.createCustomer(String(process.env.nameItem),String(process.env.price),
+  String(process.env.unit),String(process.env.description))
+  await expect(page).toHaveURL(/.*\/items/);
+});
 
-    await page.pause();
-  });
+test('delete item',async({page})=>{
+  const Entertoitem = new entertointem(page);
+  await Entertoitem.entertoItem();
 
-  test('delete item',async({page})=>{
-    const Entertoitem = new entertointem(page);
-    await Entertoitem.entertoItem();
-    expect (page.locator('//table')).toBeVisible;
-    const tableContainer= page.locator('//table');//contenedor de la tabla
-    const rows= await tableContainer.locator('xpath=.//tr').all();//obetenemos todas las filas de la tabla 
-    await expect(tableContainer.locator('xpath=.//tbody//tr')).toHaveCount(3)//Comprobamos que se obetegan el numero de filas obtenidas
+  await expect( page.locator('td:nth-child(6) > .relative').first()).toBeVisible();
+  await page.locator('td:nth-child(6) > .relative').first().click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button',{name:'Ok'}).click();
+})
+
+test('New login customer',async({page})=>{
     
-    console.log(rows.length)//Se imprime por consola cuantas filas se obtienen en la variable rows
-
-    for (let row of rows){//Se hace recorrido de las filas y se imprimen solo el nombre
-      //console.log(await row.innerHTML())
-      console.log(await row.innerText())
-    }
-
-    /*if (rows.length>1) {
-      await page.locator('td:nth-child(6) > .relative').first().click();
-      await page.getByRole('menuitem', { name: 'Delete' }).click();
-      await page.getByRole('button',{name:'Ok'}).click()
-      console.log(rows.length)
-     }else{
-      console.log('No hay articulos para eliminar')
-     }*/
-
-    await page.pause()
-  })
-
+  await page.goto(String(process.env.NewUrl))
+  await page.locator('//input[@type="email"]').fill(String(process.env.email));
+  await page.locator('//input[@type="password"]').fill(String(process.env.password));
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page).toHaveURL(/.*\/dashboard/);
+})

@@ -29,7 +29,7 @@ export class createNewCustomer{
         this.emailTextbox = page.locator('//input[@name="email"]');
         this.numberPhoneTextbox = page.locator('//input[@name="phone"]').nth(0);
         this.currencyTextbox = page.locator('.p-0>input').nth(0);
-        this.selectcurrency = page.locator('li').filter({ hasText: 'COP - Colombian Peso' });
+        this.selectcurrency = page.locator('.p-0>input').nth(0);
         this.nameWebsiteTextbox = page.locator('//input[@type="url"]');
         this.prefixTextbox = page.locator('//input[@name="name"]').nth(1);
         this.portalAccess = page.locator('button[role="switch"]');
@@ -37,7 +37,7 @@ export class createNewCustomer{
         this.Confirm_PasswordTextbox = page.locator('//input[@name="confirm_password"]');
         this.addressnameTextbox = page.locator('//input[@name="address_name"]').nth(0);
         this.countryTextbox = page.locator('.p-0>input').nth(1);
-        this.selectCountry = page.locator('ul').filter({ hasText: /^Colombia$/ });
+        this.selectCountry = page.locator('.p-0>input').nth(1);
         this.stateTextbox = page.locator('input[name="billing.state"]');
         this.cityTextbox = page.locator('input[name="billing.city"]');
         this.addressTextbox = page.locator('//textarea[@name="billing_street1"]');
@@ -55,7 +55,7 @@ export class createNewCustomer{
             await this.emailTextbox.fill(email)
             await this.numberPhoneTextbox.fill(numberPhone)
             await this.currencyTextbox.fill(currency)
-            await this.selectcurrency.click()
+            await this.selectcurrency.press('Enter')
             await this.nameWebsiteTextbox.fill(nameWebsite)
             await this.prefixTextbox.fill(prefix)
             await this.portalAccess.click()
@@ -63,7 +63,7 @@ export class createNewCustomer{
             await this.Confirm_PasswordTextbox.fill(confirm_password)
             await this.addressnameTextbox.fill(address_name)
             await this.countryTextbox.fill(country)
-            await this.selectCountry.click()
+            await this.selectCountry.press('Enter')
             await this.stateTextbox.fill(state)
             await this.cityTextbox.fill(city)
             await this.addressTextbox.fill(address)
