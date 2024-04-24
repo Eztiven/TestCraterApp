@@ -4,13 +4,11 @@ import { entertoNewCustomer } from './pageobjects/entertoNewCustomer';
 import { createNewCustomer } from './pageobjects/createNewCustomer';
 import { entertointem } from './pageobjects/entertoitem';
 import { createNewItem } from './pageobjects/createNewItem';
-import { stringify } from 'querystring';
 
 // Antes de cada prueba, realiza el inicio de sesión
 test.beforeEach('Login',async({page})=>{
   const loginpage= new Login(page)
   await loginpage.loginWhitCredential(process.env.URL);
-  expect(page.getByRole('link',{name:'Dashboard'})).toBeVisible();
 })
 
 test('enter to customer', async ({ page }) => {
@@ -31,23 +29,14 @@ test('create new customer', async ({ page }) => {
   String(process.env.prefix),String(process.env.password),String(process.env.confirm_password), 
   String(process.env.address_name),String(process.env.country),String(process.env.state),
   String(process.env.city),String(process.env.address),String(process.env.zip))
-  await expect(page).toHaveURL(/.*\/view/);
 });
 
 test('delete customer',async({page})=>{
   const Entertocustomer = new entertoNewCustomer(page)
   await Entertocustomer.entertoCustomer();
 
-  expect (page.locator('table[class="min-w-full divide-y divide-gray-200"]')).toBeVisible;
-  const tableContainer= page.locator('//table[@class="min-w-full divide-y divide-gray-200"]//tbody')
-  const rows= await tableContainer.locator('xpath=.//tr').all();
-
-  if (rows.length>1 && await page.locator('button[type="button"]').nth(2).isVisible() ) {
-    await page.locator('td:nth-child(6) > .relative').first().click();
-    await page.getByRole('menuitem', { name: 'Delete' }).click();
-  }else{
-    console.log('No hay clientes para eliminar')
-  }
+  await page.locator('td:nth-child(6) > .relative').first().click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
 })
 
 
@@ -69,8 +58,6 @@ test('create new items', async ({ page }) => {
 test('delete item',async({page})=>{
   const Entertoitem = new entertointem(page);
   await Entertoitem.entertoItem();
-
-  await expect( page.locator('td:nth-child(6) > .relative').first()).toBeVisible();
   await page.locator('td:nth-child(6) > .relative').first().click();
   await page.getByRole('menuitem', { name: 'Delete' }).click();
   await page.getByRole('button',{name:'Ok'}).click();

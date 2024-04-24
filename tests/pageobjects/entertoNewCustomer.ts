@@ -11,11 +11,11 @@ export class entertoNewCustomer{
 
     async entertoNewCustomer(){
         await this.linkCustomers.click()
-        expect(this.buttonNewCustomer).toBeVisible;
+        expect(this.buttonNewCustomer).toBeVisible();
         await this.buttonNewCustomer.click();
     }
     async entertoCustomer(){
         await this.linkCustomers.click()
-        expect(this.buttonNewCustomer).toBeVisible;
+        expect(this.buttonNewCustomer).toBeVisible();
     }
 }
